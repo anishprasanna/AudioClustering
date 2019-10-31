@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import librosa.display
 import librosa.feature
 
-data, sampling_rate = librosa.load('./data/203424.wav')
+data, sampling_rate = librosa.load('assignment5/data/203654.wav')
 
 #will extract 40 Mel-frequency cepstral coefficients
 #these can be used as features to represent each wav file

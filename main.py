@@ -1,5 +1,6 @@
 import glob
 import os
+import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import librosa.display
@@ -11,19 +12,23 @@ def main():
     # print(len(all_files))
     data_list = []
     sampling_rate_list = []
-    for file in all_files:
-        data_list.append(librosa.load(file))
-        sampling_rate_list.append(librosa.load(file))
+    # for file in all_files:
+    #     data_list.append(librosa.load(file))
+    #     sampling_rate_list.append(librosa.load(file))
 
-    #will extract 40 Mel-frequency cepstral coefficients
-    #these can be used as features to represent each wav file
-    #to learn more about MFCCS visit https://en.wikipedia.org/wiki/Mel-frequency_cepstrum
-    
-    mfccs = librosa.feature.mfcc(y=data_list, sr=sampling_rate_list, n_mfcc=40)
+    #turn lists into numpy arrays
+    data_list = np.asarray(data_list)
+    sampling_rate_list = np.asarray(sampling_rate_list)
 
-    mfccsscaled = np.mean(mfccs.T,axis=0)
-    
-    print(mfccsscaled)
+    #write feature set from every file to csv
+    with open('features.csv', 'a') as csvFile:
+        writer = csv.writer(csvFile)
+        for file in all_files:
+            data, sr = librosa.load(file)
+            mfccs = librosa.feature.mfcc(y=data, sr=sr, n_mfcc=10)
+            mfccsscaled = np.mean(mfccs.T,axis=0)
+            writer.writerow(mfccsscaled)
+    csvFile.close()
 
 if __name__ == "__main__":
     main()
