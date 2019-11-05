@@ -71,6 +71,9 @@ def main():
                 num_clusters[i].append(v)
         i += 1
     
+    #lines 75 - 97 written by Carlos S.
+
+    #have to filter out each name and put it into respective sublists within big list
     sub_list_to_output = []
     list_to_output = []
     for item in num_clusters:
@@ -82,13 +85,8 @@ def main():
         sub_list_to_output = []
 
     print('list to output in output file', list_to_output)
-        
-    #The output should begin with a single integer on the first line indicating the number of clusters, 
-    # followed by multiple lines of comma-delimited lists of cluster members. More specifically, 
-    # the second line will contain members of cluster1, the third one will list members of cluster2, etc. 
-    # Each member in a cluster should be identified by the corresponding file number 
-    # (e.g. 203424 for the sample file in the sample.py).
 
+    #writes output into output.txt
     output_file = 'output/output.txt'
     with open(output_file, 'w') as fw:
         fw.write('Number of Clusters: ' + str(len(list_to_output)) + '\n')
