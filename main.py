@@ -1,6 +1,7 @@
 import glob
 import os
 import csv
+import re
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
@@ -50,30 +51,51 @@ def main():
     # print("Data list: ", data_list)
     # print("Sampling list: ", sampling_rate_list)
 
-    testdata = np.array([[1, 2], [2, 2], [3, 5], [87, 99]])
+    # testdata = np.array([[1, 2], [2, 2], [3, 5], [87, 99]])
     clustering = DBSCAN(eps=75, min_samples=2).fit(data_list)
     # print("Clustering: ", clustering.labels_)
     clustercount = np.max(clustering.labels_) + 1
     # print("cluster count is: ", clustercount)
     clusteringlist = list(clustering.labels_)
     # print(clusteringlist)
-    clusters = np.empty([features, clustercount])
-    #for i in range(clustercount):
+    # clusters = np.empty([features, clustercount])
+
     zipped = zip(clusteringlist, all_files)
     zipped = set(zipped)
 
     num_clusters = [[] for i in range(1, clustercount+1)]
-    print(num_clusters)
-    i = 0
-    numiterations = 0
+    
     for k,v in zipped:
         for i in range(len(zipped)):
             if k == i:
                 num_clusters[i].append(v)
         i += 1
-    print(num_clusters)
+    
+    sub_list_to_output = []
+    list_to_output = []
+    for item in num_clusters:
+        for subitem in item:
+            subitem = subitem.replace('assignment5/data/', '')
+            subitem = subitem.replace('.wav', '')
+            sub_list_to_output.append(subitem)
+        list_to_output.append(sub_list_to_output)
+        sub_list_to_output = []
+
+    print('list to output in output file', list_to_output)
         
-    #print("Clustering: ", clustering)
+    #The output should begin with a single integer on the first line indicating the number of clusters, 
+    # followed by multiple lines of comma-delimited lists of cluster members. More specifically, 
+    # the second line will contain members of cluster1, the third one will list members of cluster2, etc. 
+    # Each member in a cluster should be identified by the corresponding file number 
+    # (e.g. 203424 for the sample file in the sample.py).
+
+    output_file = 'output/output.txt'
+    with open(output_file, 'w') as fw:
+        fw.write('Number of Clusters: ' + str(len(list_to_output)) + '\n')
+        i = 0
+        for cluster in list_to_output:
+            fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
+            i += 1
 
 if __name__ == "__main__":
     main()
