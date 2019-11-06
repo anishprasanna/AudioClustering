@@ -105,6 +105,7 @@ venv.bak/
 
 #large data files
 assignment5/other_files
+assignment5/data
 
 #remove .DS_Store
 .DS_Store
