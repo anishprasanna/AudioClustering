@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#large data files
+assignment5/other_files
+
+#remove .DS_Store
+.DS_Store
