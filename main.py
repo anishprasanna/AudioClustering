@@ -121,6 +121,5 @@ def sci_kit_KMeans(vectors, k):
             print("Total files in Cluster " + str(i+1) + ": " + str(count))
             i += 1
 
-
 if __name__ == "__main__":
     main()
