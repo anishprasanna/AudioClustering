@@ -1,5 +1,5 @@
 Number of Clusters: 4
-Cluster 0 contains: ['206037', '203654', '209864', '205878', '208652']
-Cluster 1 contains: ['203913', '204765', '205610']
-Cluster 2 contains: ['204773', '207124', '209672', '204067', '207962']
-Cluster 3 contains: ['204240', '204408']
+Cluster 0 contains: ['7064', '2937', '7066']
+Cluster 1 contains: ['344', '4912']
+Cluster 2 contains: ['4911', '4910']
+Cluster 3 contains: ['7068', '7060', '7067', '7063', '7065', '7062']

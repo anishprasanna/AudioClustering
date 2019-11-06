@@ -5,18 +5,21 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
+from sklearn.neighbors import NearestNeighbors
 import librosa.display
 import librosa.feature
 
 def main():
     #get rid of scientific notation in numpy arrays
     np.set_printoptions(suppress=True)
-    features = 8
+    features = 40
 
     all_files = glob.glob('assignment5/data/*.wav') #assignment5/data
     all_files.sort()
     data_list = []
     sampling_rate_list = []
+
+    #Writing feature sets to csv written by Alex B.
 
     #write feature set from every file to csv
     with open('features.csv', 'w') as csvFile:
@@ -29,13 +32,28 @@ def main():
             writer.writerow(mfccsscaled)
     csvFile.close()
 
-    # print("Pre numpy array data list: ", data_list)
+    #Optimal EPS value code written by Alex B.
+
+    #find the optimal eps value
+    neigh = NearestNeighbors(n_neighbors=4)
+    nbrs = neigh.fit(data_list)
+    distances, indices = nbrs.kneighbors(data_list)
+
+    distances = np.sort(distances, axis=0)
+    distances = distances[:,1]
+    print(distances)
+    #plt.plot(distances)
+    #plt.show()
+
+
+
+    print("Pre numpy array data list: ", data_list)
 
     #turn lists into numpy arrays
     data_list = np.array(data_list)
     sampling_rate_list = np.array(sampling_rate_list)
 
-    clustering = DBSCAN(eps=75, min_samples=2).fit(data_list)
+    clustering = DBSCAN(eps=68, min_samples=2).fit(data_list)
     clustercount = np.max(clustering.labels_) + 1
     clusteringlist = list(clustering.labels_)
 
