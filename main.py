@@ -5,6 +5,8 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import KMeans
 import librosa.display
 import librosa.feature
 
@@ -24,7 +26,7 @@ def main():
     #     sampling_rate_list.append(librosa.load(file))
 
     #write feature set from every file to csv
-    with open('features.csv', 'a') as csvFile:
+    with open('features.csv', 'w') as csvFile:
         writer = csv.writer(csvFile)
         for file in all_files:
             data, sr = librosa.load(file)
@@ -94,6 +96,52 @@ def main():
         for cluster in list_to_output:
             fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
             i += 1
+    
+    #scikit agglomerative
+    print("Scikit Agglomerative Results:")
+    sci_kit_agg_clustering(data_list, len(list_to_output))
+
+    print('\n')
+
+    #scikit kmeans
+    print("Scikit KMeans Results:")
+    sci_kit_KMeans(data_list, len(list_to_output))
+
+
+def sci_kit_agg_clustering(vectors, k):
+    x = np.array(vectors)
+    agg_clustering = AgglomerativeClustering(n_clusters=k, linkage="complete").fit(x)
+    labels = agg_clustering.labels_
+    my_labels = list(dict.fromkeys(labels))
+    my_labels = list(my_labels)
+    cluster_totals = []
+    i = 0
+    while i < len(my_labels):
+        count = 0
+        for item in labels:
+            if item == my_labels[i]:
+                count += 1
+        cluster_totals.append(count)
+        print("Total files in Cluster " + str(i+1) + ": " + str(count))
+        i += 1
+
+def sci_kit_KMeans(vectors, k):
+        x = np.array(vectors)
+        k_means = KMeans(n_clusters=k).fit(x)
+        labels = k_means.labels_
+        my_labels = list(dict.fromkeys(labels))
+        my_labels = list(my_labels)
+        cluster_totals = []
+        i = 0
+        while i < len(my_labels):
+            count = 0
+            for item in labels:
+                if item == my_labels[i]:
+                    count += 1
+            cluster_totals.append(count)
+            print("Total files in Cluster " + str(i+1) + ": " + str(count))
+            i += 1
+
 
 if __name__ == "__main__":
     main()
