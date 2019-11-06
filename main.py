@@ -24,7 +24,7 @@ def main():
     #     sampling_rate_list.append(librosa.load(file))
 
     #write feature set from every file to csv
-    with open('features.csv', 'a') as csvFile:
+    with open('features.csv', 'w') as csvFile:
         writer = csv.writer(csvFile)
         for file in all_files:
             data, sr = librosa.load(file)
