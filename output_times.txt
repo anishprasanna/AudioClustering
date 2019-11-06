@@ -1,0 +1,2 @@
+Algorithm execution times for all data files with 40 features
+-DBSCAN: 32 minutes, 43 seconds

@@ -37,20 +37,19 @@ def main():
 
     #Optimal EPS value code written by Alex B.
 
-    #find the optimal eps value
-    neigh = NearestNeighbors(n_neighbors=4)
-    nbrs = neigh.fit(data_list)
-    distances, indices = nbrs.kneighbors(data_list)
+    # #find the optimal eps value
+    # neigh = NearestNeighbors(n_neighbors=4)
+    # nbrs = neigh.fit(data_list)
+    # distances, indices = nbrs.kneighbors(data_list)
 
-    distances = np.sort(distances, axis=0)
-    distances = distances[:,1]
-    print(distances)
-    #plt.plot(distances)
-    #plt.show()
-
+    # distances = np.sort(distances, axis=0)
+    # distances = distances[:,1]
+    # plt.plot(distances)
+    # plt.show()
 
 
-    print("Pre numpy array data list: ", data_list)
+
+    #print("Pre numpy array data list: ", data_list)
 
     #turn lists into numpy arrays
     data_list = np.array(data_list)
@@ -84,7 +83,7 @@ def main():
         list_to_output.append(sub_list_to_output)
         sub_list_to_output = []
 
-    print('list to output in output file', list_to_output)
+    #print('list to output in output file', list_to_output)
 
     #writes output into output.txt
     output_file = 'output/output.txt'
