@@ -115,19 +115,37 @@ def main():
 
     #scikit agglomerative output
     print("Scikit Agglomerative Results:")
-    sci_kit_agg_clustering(data_list, len(list_to_output))
+    scikit_agg_labels = sci_kit_agg_clustering(data_list, len(list_to_output))
 
     print('\n')
 
     #scikit kmeans output
     print("Scikit KMeans Results:")
-    sci_kit_KMeans(data_list, len(list_to_output))
+    scikit_kmeans_labels = sci_kit_KMeans(data_list, len(list_to_output))
+
+
+    count = 0
+    resultmat = [[0 for x in range(len(data_list))] for y in range(len(data_list))]
+    for i in clustering.labels_:
+
+        for j in clustering.labels_:
+            if clustering.labels_[i] == scikit_agg_labels[j]:
+                count +=1
+            if clustering.labels_[i] == scikit_kmeans_labels[j]:
+                count +=1
+            resultmat[i][j]=count
+            count = 0
+    print(resultmat)
+
+        
 
 #Scikit Agglomerative Complete-Link Clustering
 def sci_kit_agg_clustering(vectors, k):
     x = np.array(vectors)
     agg_clustering = AgglomerativeClustering(n_clusters=k, linkage="complete").fit(x)
     labels = agg_clustering.labels_
+    print("Cluster Assignments:")
+    print(labels)
     my_labels = list(dict.fromkeys(labels))
     my_labels = list(my_labels)
     cluster_totals = []
@@ -140,12 +158,14 @@ def sci_kit_agg_clustering(vectors, k):
         cluster_totals.append(count)
         print("Total files in Cluster " + str(i+1) + ": " + str(count))
         i += 1
+    return labels
 
 #Scikit KMeans Clustering
 def sci_kit_KMeans(vectors, k):
         x = np.array(vectors)
         k_means = KMeans(n_clusters=k).fit(x)
         labels = k_means.labels_
+        (print(labels))
         my_labels = list(dict.fromkeys(labels))
         my_labels = list(my_labels)
         cluster_totals = []
@@ -158,6 +178,7 @@ def sci_kit_KMeans(vectors, k):
             cluster_totals.append(count)
             print("Total files in Cluster " + str(i+1) + ": " + str(count))
             i += 1
+        return labels
 
 
 
