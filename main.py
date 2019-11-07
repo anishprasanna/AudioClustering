@@ -4,7 +4,9 @@ import csv
 import re
 import random
 import numpy as np
+import time
 import matplotlib.pyplot as plt
+import pandas as pd
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import AgglomerativeClustering
@@ -52,7 +54,11 @@ def main():
     data_list = np.array(data_list)
     sampling_rate_list = np.array(sampling_rate_list)
 
+    start_time = time.time()
     clustering = DBSCAN(eps=68, min_samples=2).fit(data_list)
+    end_time = time.time()
+    dbscan_elapsed_time = end_time - start_time
+    print("Time 1: " + str(dbscan_elapsed_time))
     clustercount = np.max(clustering.labels_) + 1
     clusteringlist = list(clustering.labels_)
 
@@ -93,11 +99,15 @@ def main():
     
     #Outputting our own KMeans
     j = 0
+    start_time = time.time()
     while (j < 5):
         k = (len(list_to_output))
         km = K_Means(k)
         clusters = km.fit(data_list)
         j += 1
+    end_time = time.time()
+    our_kmeans_elapsed_time = end_time - start_time
+    print("Time 2: " + str(our_kmeans_elapsed_time))
 
     print("Our Own KMeans Results:")
     for key, value in (clusters[1]).items():
@@ -107,13 +117,21 @@ def main():
 
     #scikit agglomerative output
     print("Scikit Agglomerative Results:")
+    start_time = time.time()
     scikit_agg_labels = sci_kit_agg_clustering(data_list, len(list_to_output))
+    end_time = time.time()
+    scikit_agg_elapsed_time = end_time - start_time
+    print("Time 3: " + str(scikit_agg_elapsed_time))
 
     print('\n')
 
     #scikit kmeans output
     print("Scikit KMeans Results:")
+    start_time = time.time()
     scikit_kmeans_labels = sci_kit_KMeans(data_list, len(list_to_output))
+    end_time = time.time()
+    scikit_kmeans_elapsed_time = end_time - start_time
+    print("Time 4: " + str(scikit_kmeans_elapsed_time))
 
 
     count = 0
@@ -128,6 +146,8 @@ def main():
             resultmat[i][j]=count
             count = 0
     print(resultmat)
+    df = pd.DataFrame.from_records(resultmat)
+    df.to_excel("output.xlsx")
 
         
 
