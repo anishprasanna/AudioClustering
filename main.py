@@ -48,8 +48,6 @@ def main():
     #plt.plot(distances)
     #plt.show()
 
-    print("Pre numpy array data list: ", data_list)
-
     #turn lists into numpy arrays
     data_list = np.array(data_list)
     sampling_rate_list = np.array(sampling_rate_list)
@@ -97,13 +95,8 @@ def main():
     j = 0
     while (j < 5):
         k = (len(list_to_output))
-        centroids = {}
-        for i in range(k):
-            centroids[i] = random.choice(data_list)
-
         km = K_Means(k)
-
-        clusters = km.fit(data_list, centroids)
+        clusters = km.fit(data_list)
         j += 1
 
     print("Our Own KMeans Results:")
@@ -114,19 +107,37 @@ def main():
 
     #scikit agglomerative output
     print("Scikit Agglomerative Results:")
-    sci_kit_agg_clustering(data_list, len(list_to_output))
+    scikit_agg_labels = sci_kit_agg_clustering(data_list, len(list_to_output))
 
     print('\n')
 
     #scikit kmeans output
     print("Scikit KMeans Results:")
-    sci_kit_KMeans(data_list, len(list_to_output))
+    scikit_kmeans_labels = sci_kit_KMeans(data_list, len(list_to_output))
+
+
+    count = 0
+    resultmat = [[0 for x in range(len(data_list))] for y in range(len(data_list))]
+    for i in clustering.labels_:
+
+        for j in clustering.labels_:
+            if clustering.labels_[i] == scikit_agg_labels[j]:
+                count +=1
+            if clustering.labels_[i] == scikit_kmeans_labels[j]:
+                count +=1
+            resultmat[i][j]=count
+            count = 0
+    print(resultmat)
+
+        
 
 #Scikit Agglomerative Complete-Link Clustering
 def sci_kit_agg_clustering(vectors, k):
     x = np.array(vectors)
     agg_clustering = AgglomerativeClustering(n_clusters=k, linkage="complete").fit(x)
     labels = agg_clustering.labels_
+    print("Cluster Assignments:")
+    print(labels)
     my_labels = list(dict.fromkeys(labels))
     my_labels = list(my_labels)
     cluster_totals = []
@@ -139,12 +150,14 @@ def sci_kit_agg_clustering(vectors, k):
         cluster_totals.append(count)
         print("Total files in Cluster " + str(i+1) + ": " + str(count))
         i += 1
+    return labels
 
 #Scikit KMeans Clustering
 def sci_kit_KMeans(vectors, k):
         x = np.array(vectors)
         k_means = KMeans(n_clusters=k).fit(x)
         labels = k_means.labels_
+        (print(labels))
         my_labels = list(dict.fromkeys(labels))
         my_labels = list(my_labels)
         cluster_totals = []
@@ -157,44 +170,41 @@ def sci_kit_KMeans(vectors, k):
             cluster_totals.append(count)
             print("Total files in Cluster " + str(i+1) + ": " + str(count))
             i += 1
+        return labels
 
 
-
-class K_Means:		#Adapted from the URL: https://github.com/madhug-nadig/Machine-Learning-Algorithms-from-Scratch/blob/master/K%20Means%20Clustering.py, 
-					#fixed by Alex and Andrew
-
-#Fixed by Alex
-	def __init__(self, k =3, tolerance = 0.0001, max_iterations = 500):
+#Our own kmeans implementation
+class K_Means:											#adapted from: https://pythonprogramming.net/k-means-from-scratch-2-machine-learning-tutorial/?completed=/k-means-from-scratch-machine-learning-tutorial/
+														#fixed by Alex and Andrew
+	def __init__(self, k=3, tol=0.001, max_iter=300):
 		self.k = k
-		self.tolerance = tolerance
-		self.max_iterations = max_iterations
+		self.tol = tol
+		self.max_iter = max_iter
 
-#.fit() function by Alex
-	def fit(self, vectors, centroids):
+	def fit(self,data):
+
 		self.centroids = {}
 
-		#begin iterations
-		for i in range(self.max_iterations):
-			self.classes = {}
+		for i in range(self.k):
+			self.centroids[i] = data[i]
+
+		for i in range(self.max_iter):
+			self.classifications = {}
+
 			for i in range(self.k):
-				self.classes[i] = []
-			#print("classes", self.classes)
+				self.classifications[i] = []
 
-		#find the distance between the point and cluster; choose the nearest centroid
-		sum_distances = 0
-	#sum_of_distances by Andrew
-		for features in vectors:
-			distances = [np.linalg.norm(list(set(features) - set(centroids[centroid]))) for centroid in centroids]
-			for i in range(len(distances)):
-				distances[i] = int(distances[i])
-			
-			classification = distances.index(min(distances))
-			sum_distances += min(distances)
-			self.classes[classification].append(features)
+			sum_distances = 0
+			for featureset in data:
+				distances = [np.linalg.norm(featureset-self.centroids[centroid]) for centroid in self.centroids]
+				for i in range(len(distances)):
+					distances[i] = int(distances[i])
+				print(distances)
+				classification = distances.index(min(distances))
+				sum_distances += min(distances)
+				self.classifications[classification].append(featureset)
 
-		#print("Sum distances: " + str(sum_distances))
-		return sum_distances, self.classes
-
+		return sum_distances, self.classifications
 
 if __name__ == "__main__":
-    main()
+	main()
