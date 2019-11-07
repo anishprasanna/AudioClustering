@@ -1,11 +1,5 @@
 Number of Clusters: 4
-Cluster 0 contains: ['7066', '7064', '2937']
-<<<<<<< HEAD
+Cluster 0 contains: ['7064', '2937', '7066']
 Cluster 1 contains: ['4912', '344']
 Cluster 2 contains: ['4910', '4911']
-Cluster 3 contains: ['7065', '7067', '7062', '7060', '7068', '7063']
-=======
-Cluster 1 contains: ['344', '4912']
-Cluster 2 contains: ['4911', '4910']
-Cluster 3 contains: ['7067', '7060', '7063', '7068', '7062', '7065']
->>>>>>> 3e253df501317b5da7ebcdc3197998aed362061b
+Cluster 3 contains: ['7067', '7068', '7063', '7065', '7062', '7060']
