@@ -44,7 +44,7 @@ def main():
 
     distances = np.sort(distances, axis=0)
     distances = distances[:,1]
-    print(distances)
+    # print(distances)
     #plt.plot(distances)
     #plt.show()
 
@@ -80,7 +80,7 @@ def main():
         list_to_output.append(sub_list_to_output)
         sub_list_to_output = []
 
-    print('list to output in output file', list_to_output)
+    # print('list to output in output file', list_to_output)
 
     #writes output into output.txt
     output_file = 'output/output.txt'
@@ -157,7 +157,7 @@ def sci_kit_KMeans(vectors, k):
         x = np.array(vectors)
         k_means = KMeans(n_clusters=k).fit(x)
         labels = k_means.labels_
-        (print(labels))
+        # (print(labels))
         my_labels = list(dict.fromkeys(labels))
         my_labels = list(my_labels)
         cluster_totals = []
@@ -199,7 +199,7 @@ class K_Means:											#adapted from: https://pythonprogramming.net/k-means-fr
 				distances = [np.linalg.norm(featureset-self.centroids[centroid]) for centroid in self.centroids]
 				for i in range(len(distances)):
 					distances[i] = int(distances[i])
-				print(distances)
+				# print(distances)
 				classification = distances.index(min(distances))
 				sum_distances += min(distances)
 				self.classifications[classification].append(featureset)
