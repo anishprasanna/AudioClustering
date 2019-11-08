@@ -1,5 +1,0 @@
-Number of Clusters: 4
-Cluster 0 contains: ['7066', '7064', '2937']
-Cluster 1 contains: ['344', '4912']
-Cluster 2 contains: ['4911', '4910']
-Cluster 3 contains: ['7067', '7060', '7063', '7068', '7062', '7065']

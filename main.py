@@ -13,6 +13,7 @@ import librosa.display
 import librosa.feature
 
 def main():
+
 	#get rid of scientific notation in numpy arrays
 	np.set_printoptions(suppress=True)
 	features = 40
@@ -52,10 +53,12 @@ def main():
 	data_list = np.array(data_list)
 	sampling_rate_list = np.array(sampling_rate_list)
 
+	#run DBSCAN on our data
 	clustering = DBSCAN(eps=68, min_samples=2).fit(data_list)
 	clustercount = np.max(clustering.labels_) + 1
 	clusteringlist = list(clustering.labels_)
 
+	#Setup for outputting to file
 	zipped = zip(clusteringlist, all_files)
 	zipped = set(zipped)
 
@@ -80,8 +83,8 @@ def main():
 		list_to_output.append(sub_list_to_output)
 		sub_list_to_output = []
 
-	#writes output into output.txt
-	output_file = 'output/output.txt'
+	#writes DBSCAN output into output_DBSCAN.txt
+	output_file = 'output/output_DBSCAN.txt'
 	with open(output_file, 'w') as fw:
 		fw.write('Number of Clusters: ' + str(len(list_to_output)) + '\n')
 		i = 0
@@ -94,25 +97,125 @@ def main():
 	while (j < 5):
 		k = (len(list_to_output))
 		km = K_Means(k)
-		clusters = km.fit(data_kmeans)
+		labels = km.fit(data_kmeans)
 		j += 1
+	
+	clusteringlist = labels
+	
+	#Setup for outputting to file
+	zipped = zip(clusteringlist, all_files)
+	zipped = set(zipped)
+
+	num_clusters = [[] for i in range(1, clustercount+1)]
+	
+	for k,v in zipped:
+		for i in range(len(zipped)):
+			if k == i:
+				num_clusters[i].append(v)
+		i += 1
+
+	#have to filter out each name and put it into respective sublists within big list
+	sub_list_to_output = []
+	list_to_output = []
+	for item in num_clusters:
+		for subitem in item:
+			subitem = subitem.replace('assignment5/data/', '')
+			subitem = subitem.replace('.wav', '')
+			sub_list_to_output.append(subitem)
+		list_to_output.append(sub_list_to_output)
+		sub_list_to_output = []
+	
+	#writes KMEANS output into output_KMEANS.txt
+	output_file = 'output/output_KMEANS.txt'
+	with open(output_file, 'w') as fw:
+		fw.write('Number of Clusters: ' + str(len(list_to_output)) + '\n')
+		i = 0
+		for cluster in list_to_output:
+			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
+			i += 1
 
 	#Our own kmeans results
-	print("Our Own KMeans Results:")
-	for key, value in (clusters[1]).items():
-		print("Cluster {} contains ".format(key + 1) + str(len(value)) + " files")
+	# print("Our Own KMeans Results:")
+	# for key, value in (clusters[1]).items():
+	# 	print("Cluster {} contains ".format(key + 1) + str(len(value)) + " files")
 
 	print('\n')
 
 	#scikit agglomerative output
 	print("Scikit Agglomerative Results:")
-	sci_kit_agg_clustering(data_list, len(list_to_output))
+	clusters = sci_kit_agg_clustering(data_list, len(list_to_output))
+
+	#Setup for outputting to file
+	zipped = zip(clusters, all_files)
+	zipped = set(zipped)
+
+	num_clusters = [[] for i in range(1, clustercount+1)]
+	
+	for k,v in zipped:
+		for i in range(len(zipped)):
+			if k == i:
+				num_clusters[i].append(v)
+		i += 1
+	
+	#have to filter out each name and put it into respective sublists within big list
+	sub_list_to_output = []
+	list_to_output = []
+	for item in num_clusters:
+		for subitem in item:
+			subitem = subitem.replace('assignment5/data/', '')
+			subitem = subitem.replace('.wav', '')
+			sub_list_to_output.append(subitem)
+		list_to_output.append(sub_list_to_output)
+		sub_list_to_output = []
+	
+	#writes SCIKITAGG output into output_SCIKITAGG.txt
+	output_file = 'output/output_SCIKITAGG.txt'
+	with open(output_file, 'w') as fw:
+		fw.write('Number of Clusters: ' + str(len(list_to_output)) + '\n')
+		i = 0
+		for cluster in list_to_output:
+			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
+			i += 1
 
 	print('\n')
 
 	#scikit kmeans output
 	print("Scikit KMeans Results:")
-	sci_kit_KMeans(data_list, len(list_to_output))
+	clusters = sci_kit_KMeans(data_list, len(list_to_output))
+
+	#Setup for outputting to file
+	clusteringlist = clusters
+
+	zipped = zip(clusteringlist, all_files)
+	zipped = set(zipped)
+
+	num_clusters = [[] for i in range(1, clustercount+1)]
+	
+	for k,v in zipped:
+		for i in range(len(zipped)):
+			if k == i:
+				num_clusters[i].append(v)
+		i += 1
+	
+	#have to filter out each name and put it into respective sublists within big list
+	sub_list_to_output = []
+	list_to_output = []
+	for item in num_clusters:
+		for subitem in item:
+			subitem = subitem.replace('assignment5/data/', '')
+			subitem = subitem.replace('.wav', '')
+			sub_list_to_output.append(subitem)
+		list_to_output.append(sub_list_to_output)
+		sub_list_to_output = []
+	
+	#writes SCIKITKMEANS output into output_SCIKITKMEANS.txt
+	output_file = 'output/output_SCIKITKMEANS.txt'
+	with open(output_file, 'w') as fw:
+		fw.write('Number of Clusters: ' + str(len(list_to_output)) + '\n')
+		i = 0
+		for cluster in list_to_output:
+			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
+			i += 1
 
 #Scikit Agglomerative Complete-Link Clustering
 def sci_kit_agg_clustering(vectors, k):
@@ -123,38 +226,25 @@ def sci_kit_agg_clustering(vectors, k):
 	my_labels = list(my_labels)
 	cluster_totals = []
 	i = 0
-	while i < len(my_labels):
-		count = 0
-		for item in labels:
-			if item == my_labels[i]:
-				count += 1
-		cluster_totals.append(count)
-		print("Total files in Cluster " + str(i+1) + ": " + str(count))
-		i += 1
+	return labels
 
 #Scikit KMeans Clustering
 def sci_kit_KMeans(vectors, k):
 		x = np.array(vectors)
 		k_means = KMeans(n_clusters=k).fit(x)
 		labels = k_means.labels_
+		print("labels is here", labels)
 		my_labels = list(dict.fromkeys(labels))
 		my_labels = list(my_labels)
 		cluster_totals = []
 		i = 0
-		while i < len(my_labels):
-			count = 0
-			for item in labels:
-				if item == my_labels[i]:
-					count += 1
-			cluster_totals.append(count)
-			print("Total files in Cluster " + str(i+1) + ": " + str(count))
-			i += 1
+		return labels
 
 
 #Our own kmeans implementation
-class K_Means:											#adapted from: https://pythonprogramming.net/k-means-from-scratch-2-machine-learning-tutorial/?completed=/k-means-from-scratch-machine-learning-tutorial/
-														#fixed by Alex and Andrew
-	def __init__(self, k=3, tol=0.001, max_iter=300):
+class K_Means:										#adapted from: https://pythonprogramming.net/k-means-from-scratch-2-machine-learning-tutorial/?completed=/k-means-from-scratch-machine-learning-tutorial/
+													#fixed by Alex and Andrew
+	def __init__(self, k=3, tol=0.1, max_iter=300):
 		self.k = k
 		self.tol = tol
 		self.max_iter = max_iter
@@ -173,16 +263,17 @@ class K_Means:											#adapted from: https://pythonprogramming.net/k-means-fr
 				self.classifications[i] = []
 
 			sum_distances = 0
+			data_list = []
 			for featureset in data:
 				distances = [np.linalg.norm(featureset-self.centroids[centroid]) for centroid in self.centroids]
 				for i in range(len(distances)):
 					distances[i] = int(distances[i])
-				print(distances)
 				classification = distances.index(min(distances))
 				sum_distances += min(distances)
+				data_list.append(classification)
 				self.classifications[classification].append(featureset)
 
-		return sum_distances, self.classifications
+		return data_list
 
 if __name__ == "__main__":
 	main()
