@@ -35,6 +35,7 @@ def main():
 	# 	all_files.append(reader)
 	# csvFile.close()
 	
+    #Alex Brockman 
 	all_files = []
 	with open('all_files.csv', newline='') as csvFile:
 		for row in csv.reader(csvFile):
@@ -89,7 +90,7 @@ def main():
 	#data_list = np.array(data_list)
 	sampling_rate_list = np.array(sampling_rate_list)
 
-	#run DBSCAN on our data
+	#run DBSCAN on our data (Andrew implemented run time estimations)
 	start_time = time.time()
 	clustering = DBSCAN(eps=68, min_samples=2).fit(data_list)
 	end_time = time.time()
@@ -98,20 +99,21 @@ def main():
 	clustercount = np.max(clustering.labels_) + 1
 	clusteringlist = list(clustering.labels_)
 
-	#Setup for outputting to file
+	#Setup for outputting to file (Done by Carlos)
 	zipped = zip(clusteringlist, all_files)
 	zipped = set(zipped)
 
+    #Done by Alex
 	num_clusters = [[] for i in range(1, clustercount+1)]
 	
+    #Done by Alex
 	for k,v in zipped:
 		for i in range(len(zipped)):
 			if k == i:
 				num_clusters[i].append(v)
 		i += 1
 	
-	#lines 75 - 97 written by Carlos S.
-
+	#Nested for loop written by Carlos S., write to file also written by Carlos
 	#have to filter out each name and put it into respective sublists within big list
 	sub_list_to_output = []
 	list_to_output = []
@@ -132,7 +134,7 @@ def main():
 			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
 			i += 1
 	
-	#Outputting our own KMeans
+	#Outputting our own KMeans, Done by Alex Brockman, runtime by Andrew
 	j = 0
 	start_time = time.time()
 	while (j < 5):
@@ -168,7 +170,7 @@ def main():
 		list_to_output.append(sub_list_to_output)
 		sub_list_to_output = []
 	
-	#writes KMEANS output into output_KMEANS.txt
+	#writes KMEANS output into output_KMEANS.txt, logic by Carlos, implemented by Alex
 	output_file = 'output/output_KMEANS.txt'
 	with open(output_file, 'w') as fw:
 		fw.write('Number of Clusters: ' + str(len(list_to_output)) + '\n')
@@ -183,6 +185,7 @@ def main():
 	# 	print("Cluster {} contains ".format(key + 1) + str(len(value)) + " files")
 
 	#scikit agglomerative output
+    #run times by andrew
 	start_time = time.time()
 	scikit_agg_labels = sci_kit_agg_clustering(data_list, len(list_to_output))
 	end_time = time.time()
@@ -262,10 +265,10 @@ def main():
 			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
 			i += 1
 
+    #Done by Anish and Andrew
 	count = 0
 	resultmat = [[0 for x in range(len(data_list))] for y in range(len(data_list))]
 	for i in clustering.labels_:
-
 		for j in clustering.labels_:
 			if clustering.labels_[i] == scikit_agg_labels[j]:
 				count += 1
@@ -278,7 +281,7 @@ def main():
 	df = pd.DataFrame.from_records(resultmat)
 	df.to_excel("output.xlsx")
 
-#Scikit Agglomerative Complete-Link Clustering
+#Scikit Agglomerative Complete-Link Clustering, Done by Andrew, edited by Alex
 def sci_kit_agg_clustering(vectors, k):
 	x = np.array(vectors)
 	agg_clustering = AgglomerativeClustering(n_clusters=k, linkage="complete").fit(x)
@@ -289,7 +292,7 @@ def sci_kit_agg_clustering(vectors, k):
 	i = 0
 	return labels
 
-#Scikit KMeans Clustering
+#Scikit KMeans Clustering, done by Andrew, edited by Alex
 def sci_kit_KMeans(vectors, k):
 		x = np.array(vectors)
 		k_means = KMeans(n_clusters=k).fit(x)
@@ -302,8 +305,9 @@ def sci_kit_KMeans(vectors, k):
 
 
 #Our own kmeans implementation
+#fixed by Alex and Andrew
 class K_Means:										#adapted from: https://pythonprogramming.net/k-means-from-scratch-2-machine-learning-tutorial/?completed=/k-means-from-scratch-machine-learning-tutorial/
-													#fixed by Alex and Andrew
+											
 	def __init__(self, k=3, tol=0.1, max_iter=300):
 		self.k = k
 		self.tol = tol
