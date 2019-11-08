@@ -1,2 +1,6 @@
 Algorithm execution times for all data files with 40 features
--DBSCAN: 32 minutes, 43 seconds
+-Initial Feature CSV Creation Time: 32 minutes, 43 seconds
+-DBSCAN: 0.035 seconds
+-Kmeans: 33.96 seconds
+-Agglomerative Clustering: 0.041 seconds
+-Sci Kit Kmeans: 0.072 seconds

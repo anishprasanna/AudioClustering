@@ -4,7 +4,9 @@ import csv
 import re
 import random
 import numpy as np
+import time
 import matplotlib.pyplot as plt
+import pandas as pd
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import AgglomerativeClustering
@@ -18,23 +20,43 @@ def main():
 	np.set_printoptions(suppress=True)
 	features = 40
 
-	all_files = glob.glob('assignment5/data/*.wav') #assignment5/data
+	# all_files = glob.glob('assignment5/data/*.wav') #assignment5/data
+	# print(all_files)
+
+	# #Writing file names to csv written by Alex B.
+	# with open('all_files.csv', 'w') as csvFile:
+	# 	wr = csv.writer(csvFile, delimiter="\n")
+	# 	wr.writerow(all_files)
+	# csvFile.close()
+
+	# #Reading file names to list written by Alex B.
+	# with open("all_files.csv", 'r') as csvFile:
+	# 	reader = csv.reader(csvFile, delimiter='\n')
+	# 	all_files.append(reader)
+	# csvFile.close()
+	
+	all_files = []
+	with open('all_files.csv', newline='') as csvFile:
+		for row in csv.reader(csvFile):
+			all_files.append(row[0])
+
 	all_files.sort()
 	data_list = []
 	sampling_rate_list = []
 
 	#Writing feature sets to csv written by Alex B.
 
-	#write feature set from every file to csv
-	with open('features.csv', 'w') as csvFile:
-		writer = csv.writer(csvFile)
-		for file in all_files:
-			data, sr = librosa.load(file)
-			mfccs = librosa.feature.mfcc(y=data, sr=sr, n_mfcc=features)
-			mfccsscaled = np.mean(mfccs.T,axis=0)
-			data_list.append(mfccsscaled)
-			writer.writerow(mfccsscaled)
-	csvFile.close()
+	# #write feature set from every file to csv
+	# with open('features.csv', 'w') as csvFile:
+	# 	writer = csv.writer(csvFile)
+	# 	for file in all_files:
+	# 		data, sr = librosa.load(file)
+	# 		mfccs = librosa.feature.mfcc(y=data, sr=sr, n_mfcc=features)
+	# 		mfccsscaled = np.mean(mfccs.T,axis=0)
+	# 		data_list.append(mfccsscaled)
+	# 		writer.writerow(mfccsscaled)
+	# csvFile.close()
+	# print(data_list)
 
 	#Optimal EPS value code written by Alex B.
 
@@ -48,13 +70,31 @@ def main():
 	# plt.plot(distances)
 	# plt.show()
 
+	# #create list from csv
+	# with open('features.csv', 'r') as f:
+	# 	reader = csv.reader(f)
+	# 	feature = list(reader)
+	# 	data_list.append(feature)
+	# 	#data_list.append(list(reader))
+	# print(data_list)
+
+	data_list = np.loadtxt('features_all.csv', delimiter=',')
+
+	# data = file('features.csv').read()
+	# table = [row.split(',') for row in data.split('\n')]
+	# print(table)
+
 	#turn lists into numpy arrays
 	data_kmeans = data_list
-	data_list = np.array(data_list)
+	#data_list = np.array(data_list)
 	sampling_rate_list = np.array(sampling_rate_list)
 
 	#run DBSCAN on our data
+	start_time = time.time()
 	clustering = DBSCAN(eps=68, min_samples=2).fit(data_list)
+	end_time = time.time()
+	dbscan_elapsed_time = end_time - start_time
+	print("Time DBSCAN: " + str(dbscan_elapsed_time))
 	clustercount = np.max(clustering.labels_) + 1
 	clusteringlist = list(clustering.labels_)
 
@@ -94,14 +134,17 @@ def main():
 	
 	#Outputting our own KMeans
 	j = 0
+	start_time = time.time()
 	while (j < 5):
 		k = (len(list_to_output))
 		km = K_Means(k)
-		labels = km.fit(data_kmeans)
+		kmeans_labels = km.fit(data_kmeans)
 		j += 1
-	
-	clusteringlist = labels
-	
+	end_time = time.time()
+	our_kmeans_elapsed_time = end_time - start_time
+	clusteringlist = kmeans_labels
+	print("Time Kmeans: " + str(our_kmeans_elapsed_time))
+
 	#Setup for outputting to file
 	zipped = zip(clusteringlist, all_files)
 	zipped = set(zipped)
@@ -139,14 +182,15 @@ def main():
 	# for key, value in (clusters[1]).items():
 	# 	print("Cluster {} contains ".format(key + 1) + str(len(value)) + " files")
 
-	print('\n')
-
 	#scikit agglomerative output
-	print("Scikit Agglomerative Results:")
-	clusters = sci_kit_agg_clustering(data_list, len(list_to_output))
+	start_time = time.time()
+	scikit_agg_labels = sci_kit_agg_clustering(data_list, len(list_to_output))
+	end_time = time.time()
+	scikit_agg_elapsed_time = end_time - start_time
+	print("Time Agglomerative: " + str(scikit_agg_elapsed_time))
 
 	#Setup for outputting to file
-	zipped = zip(clusters, all_files)
+	zipped = zip(scikit_agg_labels, all_files)
 	zipped = set(zipped)
 
 	num_clusters = [[] for i in range(1, clustercount+1)]
@@ -177,14 +221,15 @@ def main():
 			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
 			i += 1
 
-	print('\n')
-
 	#scikit kmeans output
-	print("Scikit KMeans Results:")
-	clusters = sci_kit_KMeans(data_list, len(list_to_output))
+	start_time = time.time()
+	scikit_kmeans_labels = sci_kit_KMeans(data_list, len(list_to_output))
+	end_time = time.time()
+	scikit_kmeans_elapsed_time = end_time - start_time
+	print("Time Sci Kit Kmeans: " + str(scikit_kmeans_elapsed_time))
 
 	#Setup for outputting to file
-	clusteringlist = clusters
+	clusteringlist = scikit_agg_labels
 
 	zipped = zip(clusteringlist, all_files)
 	zipped = set(zipped)
@@ -217,6 +262,22 @@ def main():
 			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
 			i += 1
 
+	count = 0
+	resultmat = [[0 for x in range(len(data_list))] for y in range(len(data_list))]
+	for i in clustering.labels_:
+
+		for j in clustering.labels_:
+			if clustering.labels_[i] == scikit_agg_labels[j]:
+				count += 1
+			if clustering.labels_[i] == scikit_kmeans_labels[j]:
+				count += 1
+			if clustering.labels_[i] == kmeans_labels[j]:
+				count += 1
+			resultmat[i][j]=count
+			count = 0
+	df = pd.DataFrame.from_records(resultmat)
+	df.to_excel("output.xlsx")
+
 #Scikit Agglomerative Complete-Link Clustering
 def sci_kit_agg_clustering(vectors, k):
 	x = np.array(vectors)
@@ -233,7 +294,6 @@ def sci_kit_KMeans(vectors, k):
 		x = np.array(vectors)
 		k_means = KMeans(n_clusters=k).fit(x)
 		labels = k_means.labels_
-		print("labels is here", labels)
 		my_labels = list(dict.fromkeys(labels))
 		my_labels = list(my_labels)
 		cluster_totals = []
