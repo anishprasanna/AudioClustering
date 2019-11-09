@@ -44,6 +44,9 @@ def main():
 	data_list = []
 	sampling_rate_list = []
 
+
+	data_list = np.loadtxt('features_all.csv', delimiter=',')
+
 	#Writing feature sets to csv written by Alex B.
 
 	# #write feature set from every file to csv
@@ -78,7 +81,6 @@ def main():
 	# 	#data_list.append(list(reader))
 	# print(data_list)
 
-	data_list = np.loadtxt('features_all.csv', delimiter=',')
 
 	# data = file('features.csv').read()
 	# table = [row.split(',') for row in data.split('\n')]
@@ -262,19 +264,24 @@ def main():
 			fw.write('Cluster ' + str(i) + ' contains: ' + str(cluster) + '\n')
 			i += 1
 
+	#excel file output written by Alex Brockman and Anish Prasanna
 	count = 0
+	clustering.labels_ = list(clustering.labels_)
+	scikit_agg_labels = list(scikit_agg_labels)
+	scikit_kmeans_labels = list(scikit_kmeans_labels)
 	resultmat = [[0 for x in range(len(data_list))] for y in range(len(data_list))]
-	for i in clustering.labels_:
-
-		for j in clustering.labels_:
-			if clustering.labels_[i] == scikit_agg_labels[j]:
-				count += 1
-			if clustering.labels_[i] == scikit_kmeans_labels[j]:
-				count += 1
-			if clustering.labels_[i] == kmeans_labels[j]:
-				count += 1
-			resultmat[i][j]=count
+	for i in range(len(kmeans_labels)):
+		for j in range(len(kmeans_labels)):
 			count = 0
+			if kmeans_labels[i] == scikit_agg_labels[j]:
+				count += 1
+				resultmat[i].insert(j, count)
+			if kmeans_labels[i] == scikit_kmeans_labels[j]:
+				count += 1
+				resultmat[i].insert(j, count)
+			if kmeans_labels[i] == clustering.labels_[j]:
+				count += 1
+				resultmat[i].insert(j, count)
 	df = pd.DataFrame.from_records(resultmat)
 	df.to_excel("output.xlsx")
 
